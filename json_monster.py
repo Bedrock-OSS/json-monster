@@ -1,10 +1,12 @@
 import discord, os, commentjson
+
 MIN_MESSAGE_LENGTH = 60
 MIN_JSON_RATIO = 0.5
 
 # main()
 
 client = discord.Client()
+
 
 class ConfigManager():
     CONFIG_PATH = os.path.join(os.getcwd(), "config.json")
@@ -13,12 +15,11 @@ class ConfigManager():
     def fetch_config():
         with open(ConfigManager.CONFIG_PATH, "r") as f:
             return commentjson.load(f)
-    
+
     @staticmethod
     def save_config(data):
         with open(ConfigManager.CONFIG_PATH, 'w') as f:
             commentjson.dump(data, f, indent=2)
-
 
 
 @client.event
@@ -39,26 +40,32 @@ async def on_message(message):
 
         data = commentjson.loads("{" + text + "}")
         valid = True
-    except: pass
+    except:
+        pass
 
     try:
         data = commentjson.loads("[" + text + "]")
         valid = True
-    except: pass
+    except:
+        pass
 
     try:
         data = commentjson.loads(text)
         valid = True
-    except: pass
-
+    except:
+        pass
 
     try:
         if valid and len(text) > MIN_MESSAGE_LENGTH:
             data_string = commentjson.dumps(data, indent=2)
             if data_string.startswith("{") or data_string.startswith("["):
                 channel = message.channel
-                send = await message.channel.send("**Hey {}, I've formatted your json for you!**\n*Use `?format` for instructions on formatting your own json.*\n```json\n{}``` \n to delete this message react with a 🗑️".format(message.author.display_name, data_string))
+                await message.delete()
+                send = await message.channel.send(
+                    "**Hey {}, I've formatted your json for you!**\n*Use `?format` for instructions on formatting your own json.*\n```json\n{}``` \n to delete this message react with a 🗑️".format(
+                        message.author.display_name, data_string))
                 send
+
                 def check(reaction, user):
                     return user == message.author and str(reaction.emoji) == '🗑️'
 
@@ -68,9 +75,8 @@ async def on_message(message):
                     return
                 else:
                     await send.delete()
-                await message.delete()
-                await message.delete()
     except Exception as exception:
         print(exception)
+
 
 client.run(ConfigManager.fetch_config().get("token"))
