@@ -1,9 +1,4 @@
-import json
-from json import JSONDecoder
-import discord
-import json
-import os
-
+import discord, os, commentjson
 MIN_MESSAGE_LENGTH = 60
 MIN_JSON_RATIO = 0.5
 
@@ -17,12 +12,12 @@ class ConfigManager():
     @staticmethod
     def fetch_config():
         with open(ConfigManager.CONFIG_PATH, "r") as f:
-            return json.load(f)
+            return commentjson.load(f)
     
     @staticmethod
     def save_config(data):
         with open(ConfigManager.CONFIG_PATH, 'w') as f:
-            json.dump(data, f, indent=2)
+            commentjson.dump(data, f, indent=2)
 
 
 
@@ -41,24 +36,25 @@ async def on_message(message):
     valid = False
 
     try:
-        data = json.loads("{" + text + "}")
+
+        data = commentjson.loads("{" + text + "}")
         valid = True
     except: pass
 
     try:
-        data = json.loads("[" + text + "]")
+        data = commentjson.loads("[" + text + "]")
         valid = True
     except: pass
 
     try:
-        data = json.loads(text)
+        data = commentjson.loads(text)
         valid = True
     except: pass
 
 
     try:
         if valid and len(text) > MIN_MESSAGE_LENGTH:
-            data_string = json.dumps(data, indent=2)
+            data_string = commentjson.dumps(data, indent=2)
             if data_string.startswith("{") or data_string.startswith("["):
                 await message.channel.send("**Hey {}, I've formatted your json for you!**\n*Use `?format` for instructions on formatting your own json.*\n```json\n{}```".format(message.author.display_name, data_string))
                 await message.delete()
