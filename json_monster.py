@@ -56,7 +56,19 @@ async def on_message(message):
         if valid and len(text) > MIN_MESSAGE_LENGTH:
             data_string = commentjson.dumps(data, indent=2)
             if data_string.startswith("{") or data_string.startswith("["):
-                await message.channel.send("**Hey {}, I've formatted your json for you!**\n*Use `?format` for instructions on formatting your own json.*\n```json\n{}```".format(message.author.display_name, data_string))
+                channel = message.channel
+                send = await message.channel.send("**Hey {}, I've formatted your json for you!**\n*Use `?format` for instructions on formatting your own json.*\n```json\n{}``` \n to delete this message react with a 🗑️".format(message.author.display_name, data_string))
+                send
+                def check(reaction, user):
+                    return user == message.author and str(reaction.emoji) == '🗑️'
+
+                try:
+                    reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
+                except asyncio.TimeoutError:
+                    return
+                else:
+                    await send.delete()
+                await message.delete()
                 await message.delete()
     except Exception as exception:
         print(exception)
