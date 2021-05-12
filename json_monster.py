@@ -1,4 +1,4 @@
-import discord, os, commentjson
+import discord, os, commentjson, asyncio, time
 
 MIN_MESSAGE_LENGTH = 60
 MIN_JSON_RATIO = 0.5
@@ -34,6 +34,7 @@ async def on_message(message):
         return
 
     text = message.content
+    text = text.replace("```", "") ##This may cause issues if someone has a name like `````` but i doubt that would happen and it would break formatting anyways so ¯\_(ツ)_/¯
     valid = False
 
     try:
@@ -60,17 +61,17 @@ async def on_message(message):
             data_string = commentjson.dumps(data, indent=2)
             if data_string.startswith("{") or data_string.startswith("["):
                 channel = message.channel
-                await message.delete()
                 send = await message.channel.send(
-                    "**Hey {}, I've formatted your json for you!**\n*Use `?format` for instructions on formatting your own json.*\n```json\n{}``` \n to delete this message react with a 🗑️".format(
+                    "**{},**\n To delete this message react with a 🚫.\n```json\n{}``` \n ".format(
                         message.author.display_name, data_string))
                 send
-
-                def check(reaction, user):
-                    return user == message.author and str(reaction.emoji) == '🗑️'
-
+                await send.add_reaction('🚫')
+                time.sleep(0.2)
+                await message.delete()
+                def check_reactions(reaction, user) -> bool:
+                    return user.id==message.author.id and reaction.emoji=='🚫' and reaction.message.id==send.id
                 try:
-                    reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
+                    reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check_reactions)
                 except asyncio.TimeoutError:
                     return
                 else:
