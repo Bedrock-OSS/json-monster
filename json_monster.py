@@ -33,9 +33,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    text = message.content
-    if text[len(text)-1] == ",":
-        text = text[:-1]
+    text = message.content.rstrip(',')
     text = text.replace("```", "") ##This may cause issues if someone has a name like `````` but i doubt that would happen and it would break formatting anyways so ¯\_(ツ)_/¯
     valid = False
     try:
