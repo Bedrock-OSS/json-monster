@@ -28,7 +28,11 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+<<<<<<< HEAD
     text = message.content.rstrip(',')## Removes trailing commas which break the json formatting making it be wrapped in []
+=======
+    text = message.content.rstrip(',')
+>>>>>>> 9ec344134433e1e56762b58e797c694b4150ce12
     text = text.replace("```", "") ##This may cause issues if someone has a name like `````` but i doubt that would happen and it would break formatting anyways so ¯\_(ツ)_/¯
     valid = False
     try:
