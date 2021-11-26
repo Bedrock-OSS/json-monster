@@ -71,6 +71,8 @@ async def on_message(message):
                     reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check_reactions)
                 except asyncio.TimeoutError:
                     await send.clear_reactions()
+                    await send.edit(content="**{}:**\n```json\n{}``` \n ".format(
+        message.author.display_name, data_string))
                     return
                 else:
                     await send.delete()
