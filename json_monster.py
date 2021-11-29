@@ -59,7 +59,7 @@ async def on_message(message):
                 channel = message.channel
                 ## Variable send is the message sent, we are looking for reactions and delete the message if we detect the correct reaction from the correct user
                 send = await message.channel.send(
-                    "**{},**\n To delete this message react with a 🚫.\n```json\n{}``` \n ".format(
+                    "**{},**\n Your JSON has been formatted to delete this message react with a 🚫.\n```json\n{}``` \n ".format(
                         message.author.display_name, data_string))
                 send
                 await send.add_reaction('🚫') #Adds reaction for message deletion
@@ -71,7 +71,7 @@ async def on_message(message):
                     reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check_reactions)
                 except asyncio.TimeoutError:
                     await send.clear_reactions()
-                    await send.edit(content="**{}:**\n```json\n{}``` \n ".format(
+                    await send.edit(content="**{}**,\n Your JSON has been formatted.\n```json\n{}``` \n ".format(
         message.author.display_name, data_string))
                     return
                 else:
