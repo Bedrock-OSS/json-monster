@@ -59,7 +59,7 @@ async def on_message(message):
                 channel = message.channel
                 ## Variable send is the message sent, we are looking for reactions and delete the message if we detect the correct reaction from the correct user
                 send = await message.channel.send(
-                    "**{},**\n Your JSON has been formatted to delete this message react with a 🚫.\n```json\n{}``` \n ".format(
+                    "**{},**\n Your JSON has been formatted. To delete this message react with a 🚫.\n```json\n{}``` \n ".format(
                         message.author.display_name, data_string))
                 send
                 await send.add_reaction('🚫') #Adds reaction for message deletion
